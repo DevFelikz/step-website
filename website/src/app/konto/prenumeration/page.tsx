@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { pauseSubscription, cancelSubscription } from "@/app/actions/subscription";
-import { changePlanForm } from "@/app/actions/user-account";
 import {
   strengthLabel,
   DELIVERY_STATUS_LABELS,
@@ -34,24 +33,21 @@ export default async function KontoPrenumerationPage({
   const uid = session?.user?.id;
   if (!uid) redirect("/auth/logga-in?callbackUrl=/konto/prenumeration");
 
-  const [user, plans] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: uid },
-      include: {
-        plan: true,
-        subscriptions: {
-          where: { status: { not: "CANCELLED" } },
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          include: {
-            deliveries: { orderBy: { deliveryIndex: "asc" } },
-            orders: { orderBy: { createdAt: "desc" }, take: 1 },
-          },
+  const user = await prisma.user.findUnique({
+    where: { id: uid },
+    include: {
+      plan: true,
+      subscriptions: {
+        where: { status: { not: "CANCELLED" } },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        include: {
+          deliveries: { orderBy: { deliveryIndex: "asc" } },
+          orders: { orderBy: { createdAt: "desc" }, take: 1 },
         },
       },
-    }),
-    prisma.plan.findMany({ where: { visible: true }, orderBy: { sort: "asc" } }),
-  ]);
+    },
+  });
   if (!user) return null;
 
   const activeSub = user.subscriptions[0] ?? null;
@@ -288,51 +284,6 @@ export default async function KontoPrenumerationPage({
             Gå till shoppen →
           </Link>
 
-          {/* Legacy plan link fallback */}
-          <form action={changePlanForm} className="mt-8 space-y-4">
-            <h2 className="text-sm font-semibold tracking-wide text-step-muted">
-              Koppla plan manuellt (utan betalning)
-            </h2>
-            <div className="space-y-3">
-              <label className="flex cursor-pointer items-start gap-3 rounded border border-step-border/80 p-4 hover:border-step-gold/40">
-                <input
-                  type="radio"
-                  name="planId"
-                  value=""
-                  defaultChecked={!user.planId}
-                  className="mt-1 h-4 w-4"
-                />
-                <span>
-                  <span className="font-medium text-white">Ingen plan</span>
-                </span>
-              </label>
-              {plans.map((p) => (
-                <label
-                  key={p.id}
-                  className="flex cursor-pointer items-start gap-3 rounded border border-step-border/80 p-4 hover:border-step-gold/40"
-                >
-                  <input
-                    type="radio"
-                    name="planId"
-                    value={p.id}
-                    defaultChecked={user.planId === p.id}
-                    className="mt-1 h-4 w-4"
-                  />
-                  <span>
-                    <span className="font-medium text-white">{p.name}</span>
-                    <span className="ml-2 text-step-gold">{p.priceLabel}</span>
-                    <span className="mt-1 block text-sm text-step-muted">{p.subtitle}</span>
-                  </span>
-                </label>
-              ))}
-            </div>
-            <button
-              type="submit"
-              className="rounded bg-step-gold px-5 py-2.5 text-sm font-semibold text-black hover:bg-step-gold-dim"
-            >
-              Koppla plan
-            </button>
-          </form>
         </div>
       )}
     </div>

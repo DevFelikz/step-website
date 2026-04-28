@@ -88,6 +88,10 @@ export function HeroBackgroundField({ initialValue }: Props) {
         <code className="text-step-gold">/public</code> (t.ex. <code className="text-step-gold">/images/…</code>), eller
         ladda upp — bilden hamnar i <code className="text-step-gold">/images/uploads/</code>. Tom = bara gradient.
       </p>
+      <p className="inline-flex items-center gap-1.5 rounded bg-step-gold/10 px-2.5 py-1 text-xs font-medium text-step-gold">
+        <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3 shrink-0"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.75 10.5h-1.5v-5h1.5v5zm0-6.5h-1.5V3.5h1.5V5z"/></svg>
+        Rekommenderad storlek: <strong>1920 × 1080 px</strong> (16:9) · max 3 MB · JPG eller WebP
+      </p>
       {showPreview && url.trim() ? (
         <div className="mt-2 overflow-hidden rounded-md border border-step-border">
           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -272,3 +272,87 @@ export async function deleteFaqItem(id: string) {
   revalidatePath("/admin/faq");
   revalidatePath("/faq");
 }
+
+// ── Newsletter sending ────────────────────────────────────────────────────────
+
+export type SendNewsletterResult =
+  | { ok: true; sent: number; failed: number }
+  | { ok: false; error: string };
+
+export async function sendNewsletter(formData: FormData): Promise<SendNewsletterResult> {
+  await guard();
+
+  const subject = String(formData.get("subject") ?? "").trim();
+  const bodyHtml = String(formData.get("bodyHtml") ?? "").trim();
+  const recipientMode = String(formData.get("recipientMode") ?? "all");
+
+  if (!subject) return { ok: false, error: "Ämnesrad saknas" };
+  if (!bodyHtml) return { ok: false, error: "Innehåll saknas" };
+
+  // Collect recipient emails
+  let emails: string[] = [];
+  if (recipientMode === "selected") {
+    const ids = formData.getAll("recipientIds").map(String).filter(Boolean);
+    if (ids.length === 0) return { ok: false, error: "Välj minst en mottagare" };
+    const subs = await prisma.newsletterSubscriber.findMany({
+      where: { id: { in: ids } },
+      select: { email: true },
+    });
+    emails = subs.map((s) => s.email);
+  } else {
+    const all = await prisma.newsletterSubscriber.findMany({ select: { email: true } });
+    emails = all.map((s) => s.email);
+  }
+
+  if (emails.length === 0) return { ok: false, error: "Inga mottagare" };
+
+  // Check Resend config
+  const resendKey = process.env.RESEND_API_KEY ?? "";
+  const resendConfigured =
+    resendKey.startsWith("re_") && resendKey !== "re_REPLACE_ME" && resendKey.length > 10;
+
+  if (!resendConfigured) {
+    // Dev mode — log and pretend it worked
+    console.log(`[newsletter] Would send to ${emails.length} recipients:`, subject);
+    await prisma.sentNewsletter.create({
+      data: { subject, bodyHtml, recipientCount: emails.length },
+    });
+    revalidatePath("/admin/newsletter");
+    return { ok: true, sent: emails.length, failed: 0 };
+  }
+
+  const { Resend } = await import("resend");
+  const resend = new Resend(resendKey);
+  const from = process.env.RESEND_FROM_EMAIL ?? "no-reply@step.se";
+
+  let sent = 0;
+  let failed = 0;
+
+  // Send in batches of 100 (Resend batch limit)
+  const BATCH = 100;
+  for (let i = 0; i < emails.length; i += BATCH) {
+    const batch = emails.slice(i, i + BATCH);
+    try {
+      await resend.batch.send(
+        batch.map((to) => ({
+          from,
+          to,
+          subject,
+          html: bodyHtml,
+        })),
+      );
+      sent += batch.length;
+    } catch (err) {
+      console.error("Newsletter batch failed:", err);
+      failed += batch.length;
+    }
+  }
+
+  // Save to history
+  await prisma.sentNewsletter.create({
+    data: { subject, bodyHtml, recipientCount: sent },
+  });
+
+  revalidatePath("/admin/newsletter");
+  return { ok: true, sent, failed };
+}

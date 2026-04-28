@@ -68,6 +68,10 @@ export function PlanCardImageField({ fieldName = "cardImage", defaultValue }: Pr
       </div>
       {err ? <p className="text-xs text-red-400">{err}</p> : null}
       <p className="text-xs text-step-muted">Tomt = ingen bild på kortet. Relativ sökväg från webbrot eller säker https-URL.</p>
+      <p className="inline-flex items-center gap-1.5 rounded bg-step-gold/10 px-2.5 py-1 text-xs font-medium text-step-gold">
+        <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3 shrink-0"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.75 10.5h-1.5v-5h1.5v5zm0-6.5h-1.5V3.5h1.5V5z"/></svg>
+        Rekommenderad storlek: <strong>600 × 400 px</strong> (3:2) · JPG, PNG eller WebP · max 500 KB
+      </p>
     </div>
   );
 }

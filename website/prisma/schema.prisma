@@ -234,3 +234,11 @@ model PaymentProvider {
   /// JSON string — provider-specific keys/certs. Never returned to client.
   configJson  String  @default("{}")
 }
+
+model SentNewsletter {
+  id             String   @id @default(cuid())
+  subject        String
+  bodyHtml       String
+  recipientCount Int      @default(0)
+  sentAt         DateTime @default(now())
+}

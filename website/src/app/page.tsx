@@ -39,14 +39,14 @@ export default async function HomePage() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(201,162,39,0.18),transparent_50%)]"
           aria-hidden
         />
-        <div className="reveal-stagger-v relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+        <div className="reveal-stagger-v relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 flex flex-col items-center text-center">
           <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">{settings.heroEyebrow}</p>
           <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white drop-shadow-sm sm:text-5xl md:text-6xl">
             {settings.heroTitle}{" "}
             <span className="text-step-gold">{settings.heroTitleAccent}</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-step-muted drop-shadow">{settings.heroSubtitle}</p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
+          <p className="mt-6 max-w-xl text-lg text-white/75 drop-shadow">{settings.heroSubtitle}</p>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               href={settings.heroCtaHref}
               className="inline-flex items-center gap-2 rounded bg-step-olive px-8 py-4 text-sm font-semibold tracking-wide text-white shadow-lg shadow-black/30 transition hover:bg-step-olive-hover"
@@ -61,7 +61,7 @@ export default async function HomePage() {
               Se planer
             </Link>
           </div>
-          <div className="mt-12 flex flex-wrap gap-8 text-xs text-step-muted">
+          <div className="mt-12 flex flex-wrap justify-center gap-8 text-xs text-step-muted">
             <span className="flex items-center gap-2">
               <TrustIcon name="target" className="h-4 w-4 shrink-0 text-step-gold" />
               Stegvis minskning

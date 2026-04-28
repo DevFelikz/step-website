@@ -64,8 +64,14 @@ export default async function AdminOrdersPage() {
                       timeStyle: "short",
                     })}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 flex items-center gap-3">
                     <OrderStatusForm order={o} />
+                    <a
+                      href={`/admin/orders/${o.id}`}
+                      className="shrink-0 text-xs text-step-gold hover:underline"
+                    >
+                      Detaljer →
+                    </a>
                   </td>
                 </tr>
               );

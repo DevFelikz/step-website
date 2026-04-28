@@ -87,6 +87,10 @@ export function NavLogoField({ initialValue }: Props) {
         Samma regler som hero-bild: <strong className="text-step-muted">https</strong>-URL eller sökväg under{" "}
         <code className="text-step-gold">/public</code>. Utan logga visas bara sidnamnet.
       </p>
+      <p className="inline-flex items-center gap-1.5 rounded bg-step-gold/10 px-2.5 py-1 text-xs font-medium text-step-gold">
+        <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3 shrink-0"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm.75 10.5h-1.5v-5h1.5v5zm0-6.5h-1.5V3.5h1.5V5z"/></svg>
+        Rekommenderad storlek: <strong>400 × 120 px</strong> (liggande) · transparent PNG eller SVG · max 200 KB
+      </p>
       {showPreview && url.trim() ? (
         <div className="mt-2 overflow-hidden rounded-md border border-step-border bg-step-card/40 p-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}

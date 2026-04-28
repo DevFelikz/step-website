@@ -10,7 +10,7 @@ const adapter = new PrismaBetterSqlite3({
 });
 
 /** Höj när Prisma-schemat ändras så gammal cachad klient slängs (annars t.ex. saknad `cardImage` i validering). */
-const PRISMA_SCHEMA_VER = 8;
+const PRISMA_SCHEMA_VER = 9;
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
