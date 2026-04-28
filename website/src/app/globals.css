@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette — dark mode defaults */
+  --color-step-bg:         #050505;
+  --color-step-surface:    #111111;
+  --color-step-card:       #141414;
+  --color-step-border:     #2a2a2a;
+  --color-step-gold:       #c9a227;
+  --color-step-gold-dim:   #9a7b1c;
+  --color-step-olive:      #3d4a2e;
+  --color-step-olive-hover:#4a5a38;
+  --color-step-muted:      #9ca3af;
+
+  /* Semantic foreground token */
+  --color-step-ink:        #ffffff;
+}
+
+/* ─── Dark mode (default) ────────────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+}
+
+/* ─── Light mode overrides ───────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-step-bg:         #f5f2ec;
+  --color-step-surface:    #fefcf7;
+  --color-step-card:       #ffffff;
+  --color-step-border:     #e2dbd0;
+  --color-step-gold:       #b08d1a;
+  --color-step-gold-dim:   #7d6414;
+  --color-step-olive:      #374426;
+  --color-step-olive-hover:#445530;
+  --color-step-muted:      #716b62;
+  --color-step-ink:        #1c1714;
+
+  /* Tailwind v4 text-white / bg-white / border-white all use var(--color-white) */
+  --color-white:           #1c1714;
+  --color-black:           #f5f2ec;
+}
+
+/* ─── Always-dark zone (hero with bg image, admin panel) ─────────────────── */
+.step-dark-zone {
+  --color-step-bg:         #050505;
+  --color-step-surface:    #111111;
+  --color-step-card:       #141414;
+  --color-step-border:     #2a2a2a;
+  --color-step-gold:       #c9a227;
+  --color-step-gold-dim:   #9a7b1c;
+  --color-step-olive:      #3d4a2e;
+  --color-step-olive-hover:#4a5a38;
+  --color-step-muted:      #9ca3af;
+  --color-step-ink:        #ffffff;
+  --color-white:           #ffffff;
+  --color-black:           #000000;
+  color-scheme: dark;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply min-h-dvh bg-step-bg font-sans text-white antialiased;
+}
+
+/* Light mode: cards get a subtle lift shadow */
+:root[data-theme="light"] .rounded-lg,
+:root[data-theme="light"] article {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Light mode: inputs need bg tweak */
+:root[data-theme="light"] .checkout-input,
+:root[data-theme="light"] .admin-input {
+  background-color: var(--color-step-surface);
+  border-color: var(--color-step-border);
+  color: var(--color-step-ink);
+}
+
+/* Prose blocks from CMS */
+.cms-content {
+  @apply max-w-2xl space-y-5 leading-relaxed text-step-muted;
+}
+.cms-content .lead {
+  @apply text-lg text-white;
+}
+.cms-content h2 {
+  @apply mt-10 border-b border-step-border pb-2 text-xl font-semibold tracking-tight text-white first:mt-0;
+}
+.cms-content h3 {
+  @apply mb-2 mt-8 font-semibold text-white first:mt-0;
+}
+.cms-content ul,
+.cms-content ol {
+  @apply list-outside space-y-2 pl-5 marker:text-step-gold;
+}
+.cms-content ul {
+  @apply list-disc;
+}
+.cms-content ol {
+  @apply list-decimal;
+}
+.cms-content a {
+  @apply text-step-gold underline-offset-2 hover:underline;
+}
+.cms-content strong {
+  @apply font-medium text-white;
+}
+.cms-content .callout {
+  @apply rounded-lg border border-step-border bg-step-card/80 p-4 text-sm text-step-muted;
+}
+
+.admin-input {
+  @apply w-full rounded-md border border-step-border bg-step-card px-3 py-2 text-sm text-white placeholder:text-step-muted focus:border-step-gold focus:outline-none focus:ring-1 focus:ring-step-gold;
+}
+.admin-label {
+  @apply mb-1 block text-xs font-medium uppercase tracking-wide text-step-muted;
+}
+
+.checkout-input {
+  @apply mt-1 w-full rounded-lg border border-step-border bg-step-card px-4 py-3 text-sm text-white placeholder:text-step-muted/60 focus:border-step-gold focus:outline-none focus:ring-1 focus:ring-step-gold transition;
+}
+.checkout-label {
+  @apply block text-xs font-semibold uppercase tracking-wide text-step-muted;
+}
+
+/* —— Innehåll slide-in: primärt translate (ingen osynlig text om animation strular).
+   Kräver html.step-motion (layout). Av vid prefers-reduced-motion eller utan klass. —— */
+
+@keyframes step-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.step-motion .reveal-stagger-v > * {
+    opacity: 0;
+    animation: step-rise 0.88s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: opacity, transform;
+  }
+
+  html.step-motion .reveal-stagger-v > *:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(2) {
+    animation-delay: 0.11s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(3) {
+    animation-delay: 0.18s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(4) {
+    animation-delay: 0.25s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(5) {
+    animation-delay: 0.32s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(6) {
+    animation-delay: 0.39s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(7) {
+    animation-delay: 0.46s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(8) {
+    animation-delay: 0.53s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(9) {
+    animation-delay: 0.6s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(10) {
+    animation-delay: 0.67s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(11) {
+    animation-delay: 0.74s;
+  }
+  html.step-motion .reveal-stagger-v > *:nth-child(12) {
+    animation-delay: 0.81s;
+  }
+
+  html.step-motion .reveal-stagger-grid {
+    --reveal-base: 0.06s;
+  }
+
+  html.step-motion .reveal-stagger-grid > * {
+    opacity: 0;
+    animation: step-rise 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: opacity, transform;
+  }
+
+  html.step-motion .reveal-stagger-grid > *:nth-child(1) {
+    animation-delay: calc(var(--reveal-base) + 0s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(2) {
+    animation-delay: calc(var(--reveal-base) + 0.07s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(3) {
+    animation-delay: calc(var(--reveal-base) + 0.14s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(4) {
+    animation-delay: calc(var(--reveal-base) + 0.21s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(5) {
+    animation-delay: calc(var(--reveal-base) + 0.28s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(6) {
+    animation-delay: calc(var(--reveal-base) + 0.35s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(7) {
+    animation-delay: calc(var(--reveal-base) + 0.42s);
+  }
+  html.step-motion .reveal-stagger-grid > *:nth-child(8) {
+    animation-delay: calc(var(--reveal-base) + 0.49s);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.step-motion .reveal-stagger-v > *,
+  html.step-motion .reveal-stagger-grid > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+}

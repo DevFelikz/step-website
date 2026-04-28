@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="180" viewBox="0 0 720 180" role="img" aria-label="STEP">
+  <rect width="720" height="180" fill="#050505"/>
+  <g transform="translate(36, 30) scale(3)">
+    <rect x="1" y="1" width="38" height="38" rx="11" fill="#141414" stroke="#2a2a2a" stroke-width="1"/>
+    <path fill="#c9a227" d="M9 30.5V26h8v4.5H9zm0-9V17h14v4.5H9zm0-9V8h20v4.5H9z"/>
+    <path fill="#c9a227" fill-opacity="0.25" d="M9 30.5h26v1.5H9v-1.5z"/>
+  </g>
+  <text
+    x="186"
+    y="118"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif"
+    font-size="68"
+    font-weight="900"
+    font-style="italic"
+    letter-spacing="-0.03em"
+  >STEP</text>
+</svg>

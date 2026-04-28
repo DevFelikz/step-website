@@ -1,0 +1,24 @@
+# Dependencies
+website/node_modules/
+
+# Build output
+website/.next/
+website/out/
+
+# Database (contains real user data — never commit)
+website/dev.db
+website/*.db
+
+# Environment secrets
+website/.env
+website/.env.local
+website/.env.*.local
+
+# Generated Prisma client (rebuilt from schema)
+website/src/generated/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+website/.turbo/

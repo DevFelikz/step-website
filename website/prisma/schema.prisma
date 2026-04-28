@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model SiteSettings {
+  id String @id @default("default")
+
+  siteName        String @default("STEP")
+  siteTagline     String @default("Steg för steg mot mindre nikotin")
+
+  navCtaLabel     String @default("STARTA PLAN")
+  navCtaHref      String @default("/shop")
+
+  heroEyebrow     String @default("Sluta med nikotin")
+  heroTitle       String @default("Ta kontroll")
+  heroTitleAccent String @default("steg för steg")
+  heroSubtitle    String @default("En strukturerad metod med månadsleveranser — anpassad för dig.")
+  heroCtaLabel    String @default("STARTA DIN RESA")
+  heroCtaHref     String @default("/shop")
+  /// HTTPS (eller http i dev) — fullständig bild-URL till hero. Tom = bara gradient.
+  heroBackgroundImage String?
+
+  shopTitle       String @default("Välj din nivå")
+  shopSubtitle    String @default("Vi guidar dig nedåt i styrka — i din takt.")
+
+  plansSectionTitle    String @default("VÅRA PLANER")
+  plansSectionSubtitle String @default("Hitta rätt nivå för dig.")
+
+  includedTitle   String @default("INGÅR I ALLA PLANER")
+
+  footerLine      String @default("Designad i Sverige.")
+  footerBlurb     String @default("STEP är ett program för att trappa ner nikotin över tid — inte medicinsk rådgivning.")
+  copyrightText   String @default("STEP")
+
+  metaTitle       String @default("STEP — Steg för steg")
+  metaDescription String @default("Prenumeration på nikotinportioner med planerad nedtrappning.")
+
+  contactEmail    String @default("support@example.com")
+  contactPhone    String @default("+46 8 123 45 67")
+  contactHours    String @default("Mån–Fre 09:00–17:00")
+  contactCity     String @default("Stockholm, Sverige")
+
+  /// Full URL eller /images/... — logotyp i header. Tom = bara text (siteName).
+  navLogoUrl String?
+}
+
+model NavLink {
+  id      String  @id @default(cuid())
+  label   String
+  href    String
+  sort    Int     @default(0)
+  visible Boolean @default(true)
+}
+
+model Plan {
+  id          String  @id @default(cuid())
+  name        String
+  subtitle    String
+  description String
+  priceLabel  String
+  cansLabel   String
+  badge       String?
+  featured    Boolean @default(false)
+  bullets     String  @default("[]")
+  ctaLabel    String
+  ctaHref     String  @default("/shop")
+  sort        Int     @default(0)
+  visible     Boolean @default(true)
+  /// Bild på priskort (/images/... eller https). Tom = ingen bild.
+  cardImage     String?
+  users         User[]
+  subscriptions Subscription[]
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  phone        String?
+
+  planId String?
+  plan   Plan?   @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  addressLine1 String?
+  addressLine2 String?
+  postalCode   String?
+  city         String?
+  country      String? @default("Sverige")
+
+  sameBillingAsShipping Boolean @default(true)
+  billingAddressLine1   String?
+  billingPostalCode     String?
+  billingCity           String?
+
+  notifyShipmentEmail  Boolean @default(true)
+  notifyMarketingEmail Boolean @default(false)
+  locale               String? @default("sv")
+
+  /// Kept for legacy pause UI; new logic uses Subscription.pausedUntil
+  subscriptionPausedUntil DateTime?
+  deliveryNotes           String?
+
+  banned    Boolean   @default(false)
+  bannedAt  DateTime?
+  banReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+  orders        Order[]
+}
+
+/// Represents one active subscription for a user (one per user in MVP).
+model Subscription {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId String?
+  plan   Plan?   @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  /// PENDING | ACTIVE | PAUSED | CANCELLED
+  status             String   @default("PENDING")
+  startStrengthMg    Int      @default(20)
+  durationMonths     Int      @default(6)
+  currentDeliveryIdx Int      @default(0)
+  nextDeliveryDate   DateTime?
+  pausedUntil        DateTime?
+  cancelledAt        DateTime?
+  cancelReason       String?
+  deliveryNotes      String?
+
+  deliveries Delivery[]
+  orders     Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Each individual scheduled/shipped delivery in a subscription.
+model Delivery {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  deliveryIndex Int
+  strengthMg    Int
+  quantityCans  Int    @default(1)
+  scheduledDate DateTime
+
+  /// PENDING | SHIPPED | DELIVERED | SKIPPED | FAILED
+  status         String    @default("PENDING")
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  trackingNumber String?
+  trackingUrl    String?
+  notes          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Payment record — one per checkout attempt.
+model Order {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  /// PENDING | PAID | FAILED | REFUNDED
+  status         String @default("PENDING")
+  /// Total in öre (1 kr = 100 öre)
+  totalAmountOre Int
+  currency       String @default("SEK")
+
+  stripePaymentIntentId  String?
+  klarnaOrderId          String?
+  swishPaymentRequestId  String?
+
+  billingName    String?
+  billingEmail   String?
+  billingAddress String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TrustItem {
+  id      String  @id @default(cuid())
+  icon    String
+  title   String
+  body    String
+  sort    Int     @default(0)
+  visible Boolean @default(true)
+}
+
+model ContentPage {
+  id      String  @id @default(cuid())
+  slug    String  @unique
+  title   String
+  content String  @default("")
+  visible Boolean @default(true)
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model FaqItem {
+  id       String  @id @default(cuid())
+  category String  @default("Allmänt")
+  question String
+  answer   String
+  sort     Int     @default(0)
+  visible  Boolean @default(true)
+}
+
+/// One row per payment provider. configJson stores provider-specific secrets (API keys, certs).
+model PaymentProvider {
+  /// Slug used in code: "stripe" | "swish" | "klarna"
+  id          String  @id
+  displayName String
+  enabled     Boolean @default(false)
+  sort        Int     @default(0)
+  /// JSON string — provider-specific keys/certs. Never returned to client.
+  configJson  String  @default("{}")
+}
