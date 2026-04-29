@@ -197,6 +197,237 @@ npm start        # Startar produktionsservern på port 3000
 
 ---
 
+## Driftsättning på VPS (Ubuntu / Debian)
+
+> Delade webbhotell (som Loopias billigaste planer) stödjer inte Node.js.  
+> Du behöver en **VPS** — t.ex. **Loopia VPS**, DigitalOcean, Hetzner eller liknande.  
+> Minst 1 vCPU + 1 GB RAM räcker för detta projekt.
+
+### Steg 1 — Logga in på servern via SSH
+
+Öppna en terminal (Windows: PowerShell, Mac/Linux: Terminal) och kör:
+
+```bash
+ssh root@DIN-SERVER-IP
+```
+
+Skriv in det lösenord Loopia (eller din VPS-leverantör) skickade till dig.
+
+---
+
+### Steg 2 — Installera Node.js, nginx och PM2
+
+```bash
+# Uppdatera systemet
+apt update && apt upgrade -y
+
+# Installera verktyg
+apt install -y curl git nginx
+
+# Installera Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Installera PM2 (håller igång appen)
+npm install -g pm2
+
+# Verifiera
+node --version   # ska visa v20.x.x
+```
+
+---
+
+### Steg 3 — Ladda ner projektet från GitHub
+
+```bash
+cd /var/www
+git clone https://github.com/DevFelikz/step-website.git
+cd step-website/website
+npm install
+```
+
+---
+
+### Steg 4 — Skapa miljövariabelfilen
+
+```bash
+nano .env
+```
+
+Klistra in och fyll i med dina **riktiga** värden (se miljövariabler ovan för förklaring):
+
+```env
+DATABASE_URL="file:./prod.db"
+SESSION_SECRET="kör-kommandot-nedan-för-att-generera"
+ADMIN_PASSWORD_HASH=$2b$10$...hash-genererad-nedan...
+
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=no-reply@dindomän.se
+
+NEXT_PUBLIC_SITE_URL=https://dindomän.se
+```
+
+Spara med `Ctrl+O` → Enter → `Ctrl+X`.
+
+**Generera SESSION_SECRET:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+**Generera ADMIN_PASSWORD_HASH:**
+```bash
+node -e "const b=require('bcryptjs'); b.hash('DittLösenord',10).then(console.log)"
+```
+
+---
+
+### Steg 5 — Bygg och starta appen
+
+```bash
+# Skapa databasen
+npx prisma generate
+npx prisma db push
+
+# Bygg produktionsversionen
+npm run build
+
+# Starta med PM2
+pm2 start npm --name "step-website" -- start
+
+# Starta automatiskt vid serveromstart
+pm2 startup
+pm2 save
+```
+
+Kontrollera att appen kör:
+```bash
+pm2 status          # ska visa "online"
+curl localhost:3000  # ska ge HTML-svar
+```
+
+---
+
+### Steg 6 — Konfigurera nginx (koppla domänen till appen)
+
+```bash
+nano /etc/nginx/sites-available/step
+```
+
+Klistra in (byt ut `dindomän.se` mot din riktiga domän):
+
+```nginx
+server {
+    listen 80;
+    server_name dindomän.se www.dindomän.se;
+
+    location / {
+        proxy_pass         http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection 'upgrade';
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+```bash
+# Aktivera konfigurationen
+ln -s /etc/nginx/sites-available/step /etc/nginx/sites-enabled/
+
+# Testa syntax
+nginx -t
+
+# Starta om nginx
+systemctl restart nginx
+```
+
+---
+
+### Steg 7 — Peka domänen mot servern (DNS)
+
+Logga in på din domänleverantör (t.ex. Loopia kundzon → Mina domäner → DNS-inställningar) och lägg till:
+
+| Typ | Namn | Värde |
+|-----|------|-------|
+| A | `@` | `DIN-SERVER-IP` |
+| A | `www` | `DIN-SERVER-IP` |
+
+> DNS-ändringar tar vanligtvis 15 min – 2 timmar att slå igenom.  
+> Kontrollera med: `ping dindomän.se` — ska ge din server-IP.
+
+---
+
+### Steg 8 — SSL-certifikat (https://)
+
+Vänta tills DNS slagit igenom, kör sedan:
+
+```bash
+# Ubuntu/Debian med snap (rekommenderas)
+apt install -y snapd
+snap install --classic certbot
+ln -s /snap/bin/certbot /usr/bin/certbot
+
+# Hämta och installera certifikat
+certbot --nginx -d dindomän.se -d www.dindomän.se
+```
+
+Välj att **omdirigera HTTP → HTTPS** när det frågas (alternativ 2).  
+Certbot förnyar automatiskt certifikatet var 90:e dag.
+
+---
+
+### Steg 9 — Konfigurera Stripe webhook (för betalningar)
+
+1. Logga in på [dashboard.stripe.com](https://dashboard.stripe.com)
+2. Gå till **Developers → Webhooks → Add endpoint**
+3. Fyll i:
+   - **URL:** `https://dindomän.se/api/stripe/webhook`
+   - **Events:** välj `checkout.session.completed`
+4. Kopiera **Signing secret** (`whsec_...`)
+5. Uppdatera `.env` på servern:
+
+```bash
+cd /var/www/step-website/website
+nano .env   # uppdatera STRIPE_WEBHOOK_SECRET
+npm run build
+pm2 restart step-website
+```
+
+---
+
+### Uppdatera hemsidan i framtiden
+
+När du gjort ändringar lokalt och pushat till GitHub:
+
+```bash
+cd /var/www/step-website/website
+git pull
+npm install
+npm run build
+pm2 restart step-website
+```
+
+---
+
+### Felsökning
+
+```bash
+pm2 logs step-website       # felmeddelanden från Next.js
+pm2 restart step-website    # starta om appen
+systemctl status nginx      # nginx-status
+systemctl restart nginx     # starta om nginx
+```
+
+---
+
 ## Projektstruktur
 
 ```
