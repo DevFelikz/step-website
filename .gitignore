@@ -13,6 +13,7 @@ website/*.db
 website/.env
 website/.env.local
 website/.env.*.local
+website/.admin-hash
 
 # Generated Prisma client (rebuilt from schema)
 website/src/generated/
