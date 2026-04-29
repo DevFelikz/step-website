@@ -14,7 +14,13 @@ export async function POST(req: Request) {
   }
   const ok = await bcrypt.compare(password, hash);
   if (!ok) {
-    return NextResponse.json({ error: "Fel lösenord" }, { status: 401 });
+    // Temporary debug — remove after fixing
+    return NextResponse.json({
+      error: "Fel lösenord",
+      debug_hash_len: hash.length,
+      debug_hash_start: hash.slice(0, 7),
+      debug_hash_end: hash.slice(-4),
+    }, { status: 401 });
   }
   const token = await signAdminJwt();
   const res = NextResponse.json({ ok: true });
