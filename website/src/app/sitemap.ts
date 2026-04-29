@@ -4,10 +4,9 @@ import { prisma } from "@/lib/db";
 const BASE = "https://step.se";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const plans = await prisma.plan.findMany({
-    where: { visible: true },
-    select: { id: true },
-  });
+  const plans = await prisma.plan
+    .findMany({ where: { visible: true }, select: { id: true } })
+    .catch(() => []);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${BASE}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
