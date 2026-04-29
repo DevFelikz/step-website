@@ -3,7 +3,7 @@ import { getSettings } from "@/lib/siteSettings";
 import { SiteShell } from "@/components/site/SiteShell";
 import { PlanCard } from "@/components/site/PlanCard";
 import { TrustIcon } from "@/components/site/TrustIcon";
-import { CustomPlanConfigurator } from "@/components/site/CustomPlanConfigurator";
+import Link from "next/link";
 
 export default async function ShopPage() {
   const [settings, plans, trust] = await Promise.all([
@@ -22,6 +22,32 @@ export default async function ShopPage() {
             {plans.map((p) => (
               <PlanCard key={p.id} plan={p} />
             ))}
+
+            {/* Custom plan card */}
+            <Link
+              href="/shop/anpassa"
+              className="group flex flex-col rounded-2xl border border-dashed border-step-border bg-step-card p-6 transition hover:border-step-gold/50 hover:bg-step-gold/5"
+            >
+              <div className="flex flex-1 flex-col items-center justify-center py-6 text-center">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-step-border bg-step-surface text-2xl group-hover:border-step-gold/40">
+                  ✦
+                </div>
+                <p className="text-lg font-bold text-white">Bygg din egna plan</p>
+                <p className="mt-2 text-sm text-step-muted">
+                  Anpassa startstyrka, programlängd och antal burkar efter dina egna förutsättningar.
+                </p>
+                <div className="mt-6 flex flex-wrap justify-center gap-1.5 text-xs text-step-muted">
+                  {["2–20 mg", "3–12 mån", "1–4 burkar/lev."].map((tag) => (
+                    <span key={tag} className="rounded-full border border-step-border px-2.5 py-1">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 rounded-lg bg-step-surface py-3 text-center text-sm font-semibold text-step-gold transition group-hover:bg-step-gold group-hover:text-black">
+                Konfigurera →
+              </div>
+            </Link>
           </div>
           <div className="mt-16 rounded-lg border border-step-border/80 p-6">
             <p className="text-center text-xs font-semibold tracking-[0.25em] text-step-gold">
@@ -40,21 +66,6 @@ export default async function ShopPage() {
         </div>
       </div>
 
-      {/* Custom plan configurator */}
-      <div className="border-b border-step-border bg-step-surface">
-        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
-          <div className="mb-10 text-center">
-            <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">SKRÄDDARSY</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Bygg din egen plan
-            </h2>
-            <p className="mt-4 text-lg text-step-muted">
-              Vet du exakt var du vill börja? Välj styrka, längd och antal burkar — vi räknar ut resten.
-            </p>
-          </div>
-          <CustomPlanConfigurator />
-        </div>
-      </div>
     </SiteShell>
   );
 }
