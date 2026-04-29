@@ -3,6 +3,7 @@ import { getSettings } from "@/lib/siteSettings";
 import { SiteShell } from "@/components/site/SiteShell";
 import { PlanCard } from "@/components/site/PlanCard";
 import { TrustIcon } from "@/components/site/TrustIcon";
+import { CustomPlanConfigurator } from "@/components/site/CustomPlanConfigurator";
 
 export default async function ShopPage() {
   const [settings, plans, trust] = await Promise.all([
@@ -36,6 +37,22 @@ export default async function ShopPage() {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Custom plan configurator */}
+      <div className="border-b border-step-border bg-step-surface">
+        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">SKRÄDDARSY</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Bygg din egen plan
+            </h2>
+            <p className="mt-4 text-lg text-step-muted">
+              Vet du exakt var du vill börja? Välj styrka, längd och antal burkar — vi räknar ut resten.
+            </p>
+          </div>
+          <CustomPlanConfigurator />
         </div>
       </div>
     </SiteShell>
