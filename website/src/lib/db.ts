@@ -2,8 +2,12 @@ import path from "node:path";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "@/generated/prisma/client";
 
-// Match DATABASE_URL=file:./dev.db (repo root when running Next / seed from website/)
-const sqliteFile = path.join(process.cwd(), "dev.db");
+// Read database path from DATABASE_URL env var (e.g. file:./dev.db or file:/absolute/path/prod.db)
+const rawUrl = process.env.DATABASE_URL ?? "file:./dev.db";
+const dbRelPath = rawUrl.replace(/^file:/, "");
+const sqliteFile = path.isAbsolute(dbRelPath)
+  ? dbRelPath
+  : path.join(process.cwd(), dbRelPath);
 
 const adapter = new PrismaBetterSqlite3({
   url: `file:${sqliteFile.replace(/\\/g, "/")}` as `file:${string}`,
