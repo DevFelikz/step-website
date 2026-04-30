@@ -33,6 +33,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sv" className={`${dmSans.variable} step-motion h-full`} suppressHydrationWarning>
+      <head>
+        {/* Apply stored theme before first paint to prevent flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('step-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-dvh">
         <Providers>{children}</Providers>
       </body>
