@@ -29,7 +29,7 @@ export function PlanCard({ plan }: { plan: PlanCardPlan }) {
 
   return (
     <article
-      className={`relative flex flex-col rounded-2xl border p-6 transition ${
+      className={`relative flex h-full flex-col rounded-2xl border p-6 transition ${
         plan.badge ? "pt-9" : ""
       } ${
         plan.featured

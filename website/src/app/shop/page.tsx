@@ -89,15 +89,17 @@ export default async function ShopPage() {
             </h2>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-6">
             {plans.map((p) => (
-              <PlanCard key={p.id} plan={p} />
+              <div key={p.id} className="w-full max-w-[320px] flex-1 basis-72">
+                <PlanCard plan={p} />
+              </div>
             ))}
 
             {/* Custom plan card */}
             <Link
               href="/shop/anpassa"
-              className="group flex flex-col rounded-2xl border border-dashed border-step-border bg-step-card p-6 transition hover:border-step-gold/50 hover:bg-step-gold/5"
+              className="group flex w-full max-w-[320px] flex-1 basis-72 flex-col rounded-2xl border border-dashed border-step-border bg-step-card p-6 transition hover:border-step-gold/50 hover:bg-step-gold/5"
             >
               <div className="flex flex-1 flex-col items-center justify-center py-6 text-center">
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-step-border bg-step-surface text-2xl group-hover:border-step-gold/40">
