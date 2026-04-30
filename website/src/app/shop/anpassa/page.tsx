@@ -1,10 +1,13 @@
 import { SiteShell } from "@/components/site/SiteShell";
 import { CustomPlanConfigurator } from "@/components/site/CustomPlanConfigurator";
+import { getCustomPlanConfig } from "@/lib/customPlanConfig";
 import Link from "next/link";
 
 export const metadata = { title: "Bygg din egna plan — STEP" };
 
-export default function AnpassaPlanPage() {
+export default async function AnpassaPlanPage() {
+  const cfg = await getCustomPlanConfig();
+
   return (
     <SiteShell activeHref="/shop">
       <div className="border-b border-step-border">
@@ -18,14 +21,12 @@ export default function AnpassaPlanPage() {
           <div className="mb-10">
             <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">SKRÄDDARSY</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Bygg din egna plan
+              {cfg.pageTitle}
             </h1>
-            <p className="mt-4 text-lg text-step-muted">
-              Välj din startstyrka, programlängd och antal burkar — vi räknar ut pris och nedtrappningsschema direkt.
-            </p>
+            <p className="mt-4 text-lg text-step-muted">{cfg.pageSubtitle}</p>
           </div>
 
-          <CustomPlanConfigurator />
+          <CustomPlanConfigurator cfg={cfg} />
         </div>
       </div>
     </SiteShell>

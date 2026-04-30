@@ -14,6 +14,7 @@ const links: NavItem[] = [
   { divider: "Innehåll" },
   { href: "/admin/payments", label: "Betalningsmetoder" },
   { href: "/admin/plans", label: "Planer" },
+  { href: "/admin/custom-plan", label: "Bygg din egna plan" },
   { href: "/admin/trust", label: "Förtroenderad" },
   { href: "/admin/pages", label: "Sidor (CMS)" },
   { divider: "Inställningar" },

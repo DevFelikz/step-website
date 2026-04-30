@@ -2,36 +2,25 @@
 
 import { useState, useTransition } from "react";
 import { createCustomPlan } from "@/app/actions/custom-plan";
+import type { ParsedCustomPlanConfig } from "@/lib/customPlanConfig";
 
-const STRENGTHS = [2, 4, 6, 8, 10, 12, 16, 20] as const;
-const DURATIONS = [3, 6, 9, 12] as const;
-const CANS = [1, 2, 3, 4] as const;
+export function CustomPlanConfigurator({ cfg }: { cfg: ParsedCustomPlanConfig }) {
+  const { strengths, durations, minCans, maxCans, pricePerMg, discountByMonths, ctaLabel } = cfg;
 
-const PRICE_PER_CAN: Record<number, number> = {
-  2: 149, 4: 159, 6: 169, 8: 179,
-  10: 189, 12: 199, 16: 219, 20: 239,
-};
-const DURATION_DISCOUNT: Record<number, number> = {
-  3: 1.0, 6: 0.95, 9: 0.9, 12: 0.85,
-};
-const DURATION_LABEL: Record<number, string> = {
-  3: "3 mån", 6: "6 mån", 9: "9 mån", 12: "12 mån",
-};
-const DURATION_BADGE: Record<number, string | null> = {
-  3: null, 6: "Spara 5%", 9: "Spara 10%", 12: "Spara 15%",
-};
-
-export function CustomPlanConfigurator() {
-  const [startMg, setStartMg] = useState<number>(12);
-  const [duration, setDuration] = useState<number>(6);
-  const [cans, setCans] = useState<number>(2);
+  const [startMg, setStartMg] = useState<number>(strengths[Math.floor(strengths.length / 2)] ?? strengths[0] ?? 12);
+  const [duration, setDuration] = useState<number>(durations[1] ?? durations[0] ?? 6);
+  const [cans, setCans] = useState<number>(Math.min(2, maxCans));
   const [isPending, startTransition] = useTransition();
 
-  const pricePerCan = PRICE_PER_CAN[startMg] ?? 199;
-  const discount = DURATION_DISCOUNT[duration] ?? 1.0;
+  const canOptions = Array.from({ length: maxCans - minCans + 1 }, (_, i) => i + minCans);
+
+  const pricePerCan = (pricePerMg as Record<string, number>)[String(startMg)] ?? 199;
+  const discountFactor = (discountByMonths as Record<string, number>)[String(duration)] ?? 1;
+  const discountPct = Math.round((1 - discountFactor) * 100);
+
   const monthlyKr = pricePerCan * cans;
-  const totalKr = Math.round(monthlyKr * duration * discount);
-  const savings = duration > 3 ? Math.round(monthlyKr * duration * (1 - discount)) : 0;
+  const totalKr = Math.round(monthlyKr * duration * discountFactor);
+  const savings = discountPct > 0 ? Math.round(monthlyKr * duration * (1 - discountFactor)) : 0;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,7 +41,7 @@ export function CustomPlanConfigurator() {
         </p>
         <p className="mb-4 text-sm text-step-muted">Välj din nuvarande nikotinstyrka (mg per burk)</p>
         <div className="flex flex-wrap gap-2">
-          {STRENGTHS.map((mg) => (
+          {strengths.map((mg) => (
             <button
               key={mg}
               type="button"
@@ -76,25 +65,28 @@ export function CustomPlanConfigurator() {
         </p>
         <p className="mb-4 text-sm text-step-muted">Längre program ger bättre rabatt och lugnare nedtrappning</p>
         <div className="flex flex-wrap gap-2">
-          {DURATIONS.map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => setDuration(d)}
-              className={`relative rounded-lg border px-5 py-3 text-sm font-semibold transition ${
-                duration === d
-                  ? "border-step-gold bg-step-gold/10 text-step-gold"
-                  : "border-step-border text-step-muted hover:border-step-gold/40 hover:text-white"
-              }`}
-            >
-              {DURATION_LABEL[d]}
-              {DURATION_BADGE[d] && (
-                <span className="absolute -top-2 -right-2 rounded-full bg-step-gold px-1.5 py-0.5 text-[9px] font-bold text-black">
-                  {DURATION_BADGE[d]}
-                </span>
-              )}
-            </button>
-          ))}
+          {durations.map((d) => {
+            const pct = Math.round((1 - ((discountByMonths as Record<string, number>)[String(d)] ?? 1)) * 100);
+            return (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDuration(d)}
+                className={`relative rounded-lg border px-5 py-3 text-sm font-semibold transition ${
+                  duration === d
+                    ? "border-step-gold bg-step-gold/10 text-step-gold"
+                    : "border-step-border text-step-muted hover:border-step-gold/40 hover:text-white"
+                }`}
+              >
+                {d} mån
+                {pct > 0 && (
+                  <span className="absolute -top-2 -right-2 rounded-full bg-step-gold px-1.5 py-0.5 text-[9px] font-bold text-black">
+                    Spara {pct}%
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -105,7 +97,7 @@ export function CustomPlanConfigurator() {
         </p>
         <p className="mb-4 text-sm text-step-muted">Hur många burkar vill du ha per månadsleveras?</p>
         <div className="flex flex-wrap gap-2">
-          {CANS.map((n) => (
+          {canOptions.map((n) => (
             <button
               key={n}
               type="button"
@@ -160,10 +152,8 @@ export function CustomPlanConfigurator() {
             <p className="mt-1 text-sm text-step-muted">
               Totalt {totalKr.toLocaleString("sv-SE")} kr
             </p>
-            {discount < 1 && (
-              <p className="mt-0.5 text-xs text-step-gold">
-                inkl. {Math.round((1 - discount) * 100)}% programrabatt
-              </p>
+            {discountPct > 0 && (
+              <p className="mt-0.5 text-xs text-step-gold">inkl. {discountPct}% programrabatt</p>
             )}
           </div>
         </div>
@@ -173,7 +163,7 @@ export function CustomPlanConfigurator() {
           disabled={isPending}
           className="mt-6 w-full rounded-lg bg-step-gold py-4 text-sm font-bold text-black transition hover:bg-step-gold-dim disabled:opacity-50"
         >
-          {isPending ? "Skapar din plan…" : "Fortsätt till beställning →"}
+          {isPending ? "Skapar din plan…" : ctaLabel}
         </button>
       </div>
     </form>

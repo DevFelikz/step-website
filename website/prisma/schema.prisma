@@ -244,3 +244,28 @@ model SentNewsletter {
   recipientCount Int      @default(0)
   sentAt         DateTime @default(now())
 }
+
+/// Singleton config for the "Bygg din egna plan" configurator.
+model CustomPlanConfig {
+  id String @id @default("default")
+
+  pageTitle    String @default("Bygg din egna plan")
+  pageSubtitle String @default("Välj din startstyrka, programlängd och antal burkar — vi räknar ut pris och nedtrappningsschema direkt.")
+  bannerTitle  String @default("Passar ingen av planerna dig?")
+  bannerSubtitle String @default("Bygg din egen plan efter dina behov — välj styrka, längd och antal burkar själv.")
+  ctaLabel     String @default("Fortsätt till beställning →")
+
+  /// JSON int array — available mg values, e.g. [2,4,6,8,10,12,16,20]
+  strengths String @default("[2,4,6,8,10,12,16,20]")
+  /// JSON int array — available duration options in months, e.g. [3,6,9,12]
+  durations String @default("[3,6,9,12]")
+  /// Min cans per delivery
+  minCans Int @default(1)
+  /// Max cans per delivery
+  maxCans Int @default(4)
+
+  /// JSON object — price per can (kr) keyed by mg, e.g. {"2":149,"4":159,...}
+  pricePerMg String @default("{\"2\":149,\"4\":159,\"6\":169,\"8\":179,\"10\":189,\"12\":199,\"16\":219,\"20\":239}")
+  /// JSON object — discount multiplier keyed by months, e.g. {"3":1.0,"6":0.95,...}
+  discountByMonths String @default("{\"3\":1.0,\"6\":0.95,\"9\":0.9,\"12\":0.85}")
+}

@@ -1,15 +1,17 @@
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/siteSettings";
+import { getCustomPlanConfig } from "@/lib/customPlanConfig";
 import { SiteShell } from "@/components/site/SiteShell";
 import { PlanCard } from "@/components/site/PlanCard";
 import { TrustIcon } from "@/components/site/TrustIcon";
 import Link from "next/link";
 
 export default async function ShopPage() {
-  const [settings, plans, trust] = await Promise.all([
+  const [settings, plans, trust, customCfg] = await Promise.all([
     getSettings(),
     prisma.plan.findMany({ where: { visible: true }, orderBy: { sort: "asc" } }),
     prisma.trustItem.findMany({ where: { visible: true }, orderBy: { sort: "asc" } }),
+    getCustomPlanConfig(),
   ]);
 
   const heroTrust = trust.slice(0, 3);
@@ -100,10 +102,8 @@ export default async function ShopPage() {
           {/* Custom plan banner */}
           <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl border border-dashed border-step-border bg-step-card px-8 py-7 sm:flex-row">
             <div>
-              <p className="text-base font-bold text-white">Passar ingen av planerna dig?</p>
-              <p className="mt-1 text-sm text-step-muted">
-                Bygg din egen plan efter dina behov — välj styrka, längd och antal burkar själv.
-              </p>
+              <p className="text-base font-bold text-white">{customCfg.bannerTitle}</p>
+              <p className="mt-1 text-sm text-step-muted">{customCfg.bannerSubtitle}</p>
             </div>
             <Link
               href="/shop/anpassa"
