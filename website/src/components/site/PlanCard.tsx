@@ -29,9 +29,7 @@ export function PlanCard({ plan }: { plan: PlanCardPlan }) {
 
   return (
     <article
-      className={`relative flex h-full flex-col rounded-2xl border p-6 transition ${
-        plan.badge ? "pt-9" : ""
-      } ${
+      className={`relative flex h-full flex-col rounded-2xl border p-6 pt-9 transition ${
         plan.featured
           ? "border-step-gold bg-step-card shadow-[0_0_0_1px_rgba(201,162,39,0.2),0_0_40px_rgba(201,162,39,0.08)]"
           : "border-step-border bg-step-card hover:border-step-gold/40"
