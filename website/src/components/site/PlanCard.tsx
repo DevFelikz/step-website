@@ -29,21 +29,31 @@ export function PlanCard({ plan }: { plan: PlanCardPlan }) {
 
   return (
     <article
-      className={`relative flex flex-col rounded-lg border p-6 transition ${
+      className={`relative flex flex-col rounded-2xl border p-6 transition ${
         plan.badge ? "pt-9" : ""
       } ${
         plan.featured
-          ? "border-step-gold bg-step-card shadow-[0_0_0_1px_rgba(201,162,39,0.35)]"
-          : "border-step-border bg-step-card/60 hover:border-step-gold/40"
+          ? "border-step-gold bg-step-card shadow-[0_0_0_1px_rgba(201,162,39,0.2),0_0_40px_rgba(201,162,39,0.08)]"
+          : "border-step-border bg-step-card hover:border-step-gold/40"
       }`}
     >
+      {/* Badge */}
       {plan.badge ? (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-step-gold bg-step-bg px-3 py-0.5 text-[10px] font-bold tracking-widest text-step-gold">
+        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full border border-step-gold bg-step-bg px-3 py-0.5 text-[10px] font-bold tracking-widest text-step-gold">
           {plan.badge}
         </span>
       ) : null}
+
+      {/* Plan name in gold */}
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-step-gold">{plan.name}</p>
+
+      {/* Subtitle / cans info */}
+      <p className="mt-0.5 text-sm text-step-muted">{plan.cansLabel}</p>
+      <p className="text-sm text-step-muted">{plan.subtitle}</p>
+
+      {/* Product image */}
       {imageSrc ? (
-        <div className="relative mx-auto mb-4 h-36 w-36 sm:h-40 sm:w-40">
+        <div className="relative mx-auto my-6 h-36 w-36 sm:h-40 sm:w-40">
           {imageSrc.startsWith("/") ? (
             <Image
               src={imageSrc}
@@ -61,23 +71,21 @@ export function PlanCard({ plan }: { plan: PlanCardPlan }) {
             />
           )}
         </div>
-      ) : null}
-      <h3 className="text-lg font-bold tracking-wide text-white">{plan.name}</h3>
-      <p className="mt-1 text-sm text-step-gold">{plan.subtitle}</p>
-      <p className="mt-3 text-sm text-step-muted">{plan.description}</p>
-      <p className="mt-6 text-2xl font-semibold text-white">{plan.priceLabel}</p>
-      <p className="text-xs font-semibold tracking-widest text-step-muted">{plan.cansLabel}</p>
-      <ul className="mt-6 flex-1 space-y-2 text-sm text-step-muted">
-        {bullets.map((b) => (
-          <li key={b} className="flex gap-2">
-            <span className="text-step-gold">✓</span>
-            {b}
-          </li>
-        ))}
-      </ul>
+      ) : (
+        /* Placeholder circle when no image */
+        <div className="mx-auto my-6 flex h-36 w-36 items-center justify-center rounded-full border border-step-border bg-step-surface">
+          <span className="text-2xl font-black tracking-[0.25em] text-white">STEP</span>
+        </div>
+      )}
+
+      {/* Price */}
+      <p className="text-2xl font-bold text-white">{plan.priceLabel}</p>
+      <p className="mt-0.5 text-xs text-step-muted">{plan.description}</p>
+
+      {/* CTA */}
       <Link
         href={`/checkout/${plan.id}`}
-        className={`mt-8 block rounded py-3 text-center text-sm font-semibold tracking-wide transition ${
+        className={`mt-6 block rounded-lg py-3 text-center text-sm font-bold tracking-wider transition ${
           plan.featured
             ? "bg-step-gold text-black hover:bg-step-gold-dim"
             : "border border-step-gold text-step-gold hover:bg-step-gold/10"
@@ -85,6 +93,18 @@ export function PlanCard({ plan }: { plan: PlanCardPlan }) {
       >
         {plan.ctaLabel}
       </Link>
+
+      {/* Bullets */}
+      {bullets.length > 0 && (
+        <ul className="mt-6 space-y-2 border-t border-step-border pt-6 text-sm text-step-muted">
+          {bullets.map((b) => (
+            <li key={b} className="flex gap-2">
+              <span className="mt-px text-step-gold">✓</span>
+              {b}
+            </li>
+          ))}
+        </ul>
+      )}
     </article>
   );
 }
