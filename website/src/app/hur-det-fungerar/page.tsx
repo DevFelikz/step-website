@@ -7,238 +7,279 @@ export const metadata = {
     "Så fungerar STEP: välj din plan, ta emot månadsleveranser med sjunkande nikotinstyrka, och nå 0 mg i din egna takt.",
 };
 
-const STEPS = [
-  {
-    number: "01",
-    title: "Välj din nivå",
-    body: "Börja med den nikotinstyrka du använder idag — 20, 12, 6 eller 3 mg. Vi anpassar sedan schemat exakt efter din startpunkt.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    number: "02",
-    title: "Bestäm programlängd",
-    body: "6, 9 eller 12 månader — du väljer takten. Längre program ger en jämnare nedtrappning och ökar chansen att lyckas utan abstinens.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    number: "03",
-    title: "Beställ & betala",
-    body: "Slutför beställningen med Klarna, kort eller Swish. Säker betalning krypterad med TLS. Inga dolda avgifter — du ser totalkostnaden direkt.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    ),
-  },
-  {
-    number: "04",
-    title: "Första leveransen anländer",
-    body: "Inom 2–4 vardagar skickas din startportion. Diskret förpackning, spårbar frakt, direkt i brevlådan om möjligt.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 10V11" />
-      </svg>
-    ),
-  },
-  {
-    number: "05",
-    title: "Månatlig nedtrappning",
-    body: "Varje månad anländer en ny leverans med något lägre styrka. Din kropp hinner vänja sig — utan att du behöver fatta aktiva beslut varje dag.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-      </svg>
-    ),
-  },
-  {
-    number: "06",
-    title: "Du når 0 mg",
-    body: "I det sista steget levererar vi 0 mg-portioner — som ger dig vanan och ritualen utan nikotinet. Målet är att du till slut inte behöver dem heller.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
-      </svg>
-    ),
-  },
+const TIMELINE = [
+  { step: 1, mg: "8MG",  month: "MÅNAD 1",  zero: false },
+  { step: 2, mg: "6MG",  month: "MÅNAD 2",  zero: false },
+  { step: 3, mg: "4MG",  month: "MÅNAD 3",  zero: false },
+  { step: 4, mg: "2MG",  month: "MÅNAD 4",  zero: false },
+  { step: 5, mg: "1MG",  month: "MÅNAD 5",  zero: false },
+  { step: 6, mg: "0MG",  month: "MÅNAD 6",  zero: true  },
 ];
 
-const CURVE_EXAMPLE = [
-  { month: "Månad 1", mg: 20, percent: 100 },
-  { month: "Månad 2", mg: 16, percent: 80 },
-  { month: "Månad 3", mg: 12, percent: 60 },
-  { month: "Månad 4", mg: 8, percent: 40 },
-  { month: "Månad 5", mg: 4, percent: 20 },
-  { month: "Månad 6", mg: 0, percent: 0 },
+const FEATURES = [
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+      </svg>
+    ),
+    title: "Byggd att minska",
+    body: "Steg för steg.",
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+      </svg>
+    ),
+    title: "Levereras månadsvis",
+    body: "Diskret & pålitlig.",
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+      </svg>
+    ),
+    title: "Ingen bindning",
+    body: "Avsluta när som helst.",
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-7 w-7">
+        <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
+      </svg>
+    ),
+    title: "Nå noll",
+    body: "Ditt mål. Vårt system.",
+  },
 ];
 
 export default function HowItWorksPage() {
   return (
     <SiteShell activeHref="/hur-det-fungerar">
-      {/* Hero */}
-      <section className="border-b border-step-border bg-step-bg py-20 sm:py-28">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">METODEN</p>
-          <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
-            Vetenskapligt upplägg.<br />
-            <span className="text-step-gold">Din takt.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-step-muted">
-            Plötsliga avhoppsförsök misslyckas i 95% av fallen. STEP bygger på en kontrollerad
-            minskning som gör att din hjärna hinner anpassa sig gradvis.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/shop"
-              className="rounded border border-step-gold px-6 py-3 text-sm font-semibold text-step-gold transition hover:bg-step-gold hover:text-black"
-            >
-              Välj din plan →
-            </Link>
-            <Link
-              href="/faq"
-              className="rounded border border-step-border px-6 py-3 text-sm font-semibold text-step-muted transition hover:border-white/40 hover:text-white"
-            >
-              Vanliga frågor
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      {/* Step-by-step */}
-      <section className="border-b border-step-border py-20 sm:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center">
-            <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">6 ENKLA STEG</p>
-            <h2 className="mt-2 text-3xl font-bold text-white">Så fungerar det</h2>
-          </div>
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden border-b border-step-border bg-step-bg">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
 
-          <div className="relative mt-16">
-            {/* Connector line */}
-            <div className="absolute left-[calc(theme(spacing.7)/2+theme(spacing.px))] top-8 hidden h-[calc(100%-4rem)] w-px bg-step-border lg:left-1/2 lg:block" />
+            {/* Left */}
+            <div>
+              <p className="text-xs font-bold tracking-[0.25em] text-step-gold">HUR DET FUNGERAR</p>
+              <h1 className="mt-4 text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl">
+                Ett enkelt system.<br />
+                <span className="text-step-gold">Sex steg.</span>{" "}
+                <span className="text-step-gold">Sex månader.</span>
+              </h1>
+              <div className="mt-5 h-px w-12 bg-step-gold/50" />
+              <p className="mt-5 text-lg text-step-muted">
+                Välj din startstyrka.<br />
+                Sänk månadsvis. Nå noll nikotin.
+              </p>
+            </div>
 
-            <div className="space-y-10">
-              {STEPS.map((step, i) => (
-                <div
-                  key={step.number}
-                  className={`relative flex flex-col gap-6 lg:flex-row lg:items-start ${
-                    i % 2 === 1 ? "lg:flex-row-reverse" : ""
-                  }`}
-                >
-                  {/* Content card */}
-                  <div className="flex-1 rounded-xl border border-step-border bg-step-card p-6 transition hover:border-step-gold/30 lg:max-w-md">
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-step-gold/30 bg-step-gold/10 text-step-gold">
-                        {step.icon}
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold tracking-widest text-step-gold">
-                          {step.number}
-                        </span>
-                        <h3 className="mt-0.5 text-lg font-bold text-white">{step.title}</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-step-muted">{step.body}</p>
-                      </div>
+            {/* Right — staircase visual */}
+            <div className="flex items-end justify-center gap-3 pb-4 sm:gap-4">
+              {TIMELINE.map((t, i) => {
+                const heights = [56, 72, 88, 104, 120, 136];
+                const h = heights[i];
+                return (
+                  <div key={t.step} className="flex flex-col items-center gap-2">
+                    {/* Can circle */}
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-full border text-xs font-black sm:h-14 sm:w-14 ${
+                        t.zero
+                          ? "border-step-gold bg-step-gold/10 text-step-gold"
+                          : "border-step-border bg-step-surface text-white"
+                      }`}
+                    >
+                      {t.step}
                     </div>
+                    {/* Stair pillar */}
+                    <div
+                      className={`w-12 rounded-t sm:w-14 ${
+                        t.zero ? "bg-step-gold/20" : "bg-step-border/40"
+                      }`}
+                      style={{ height: `${h}px` }}
+                    />
                   </div>
-
-                  {/* Center dot on connector */}
-                  <div className="hidden w-8 shrink-0 items-center justify-center lg:flex">
-                    <div className="h-4 w-4 rounded-full border-2 border-step-gold bg-step-bg" />
-                  </div>
-
-                  {/* Spacer */}
-                  <div className="flex-1 lg:max-w-md" />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Visual nicotine curve */}
-      <section className="border-b border-step-border py-20 sm:py-24">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="text-center">
-            <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">NEDTRAPPNINGSKURVAN</p>
-            <h2 className="mt-2 text-3xl font-bold text-white">Steg för steg mot 0 mg</h2>
-            <p className="mt-3 text-step-muted">Exempelplan: start vid 20 mg, 6 månader</p>
+      {/* ── Timeline steps ── */}
+      <section className="border-b border-step-border bg-step-bg py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+
+          {/* Connector line */}
+          <div className="relative hidden sm:block">
+            <div className="absolute left-0 right-0 top-5 h-px bg-step-border" />
+            <div className="relative grid grid-cols-6 gap-2">
+              {TIMELINE.map((t) => (
+                <div key={t.step} className="flex flex-col items-center text-center">
+                  {/* Dot */}
+                  <div
+                    className={`z-10 mb-4 h-3 w-3 rounded-full border-2 ${
+                      t.zero
+                        ? "border-step-gold bg-step-gold"
+                        : "border-step-border bg-step-bg"
+                    }`}
+                  />
+                  <p className={`text-[10px] font-bold tracking-[0.15em] ${t.zero ? "text-step-gold" : "text-step-muted"}`}>
+                    STEG {t.step}
+                  </p>
+                  <p className={`mt-2 text-4xl font-black ${t.zero ? "text-step-gold" : "text-white"}`}>
+                    {t.step}
+                  </p>
+                  <p className={`mt-1 text-xs font-bold tracking-wider ${t.zero ? "text-step-gold" : "text-white"}`}>
+                    {t.mg}
+                  </p>
+                  {t.zero && (
+                    <p className="mt-0.5 text-[9px] font-bold tracking-widest text-step-gold">
+                      NOLL NIKOTIN
+                    </p>
+                  )}
+                  <p className="mt-2 text-[10px] text-step-muted">{t.month}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-12 space-y-3">
-            {CURVE_EXAMPLE.map((point) => (
-              <div key={point.month} className="flex items-center gap-4">
-                <span className="w-20 shrink-0 text-right text-sm text-step-muted">{point.month}</span>
-                <div className="relative h-8 flex-1 overflow-hidden rounded-full bg-step-card">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-step-gold to-step-olive transition-all duration-700"
-                    style={{ width: `${point.percent === 0 ? 2 : point.percent}%` }}
-                  />
-                  {point.percent === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-step-gold">FRIHET</span>
-                    </div>
-                  )}
-                </div>
-                <span className="w-12 shrink-0 text-sm font-semibold text-white">
-                  {point.mg === 0 ? "0 mg" : `${point.mg} mg`}
-                </span>
+          {/* Mobile — vertical list */}
+          <div className="grid grid-cols-3 gap-4 sm:hidden">
+            {TIMELINE.map((t) => (
+              <div
+                key={t.step}
+                className={`rounded-xl border p-3 text-center ${
+                  t.zero
+                    ? "border-step-gold bg-step-gold/5"
+                    : "border-step-border bg-step-card"
+                }`}
+              >
+                <p className={`text-[9px] font-bold tracking-wider ${t.zero ? "text-step-gold" : "text-step-muted"}`}>
+                  STEG {t.step}
+                </p>
+                <p className={`mt-1 text-2xl font-black ${t.zero ? "text-step-gold" : "text-white"}`}>
+                  {t.step}
+                </p>
+                <p className={`text-xs font-bold ${t.zero ? "text-step-gold" : "text-white"}`}>{t.mg}</p>
+                <p className="text-[9px] text-step-muted">{t.month}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 text-center">
-            <Link
-              href="/shop"
-              className="inline-flex items-center gap-2 rounded border border-step-gold px-6 py-3 text-sm font-semibold text-step-gold transition hover:bg-step-gold hover:text-black"
-            >
-              Börja din nedtrappning →
-            </Link>
+          {/* Tagline */}
+          <p className="mx-auto mt-14 max-w-2xl text-center text-lg leading-relaxed text-step-muted">
+            Vi guider dig neråt i styrka, ett steg i taget.{" "}
+            <br className="hidden sm:block" />
+            Varje månad tar dig närmare{" "}
+            <span className="font-semibold text-step-gold">noll</span> — med ett system som fungerar.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="border-b border-step-border py-16 sm:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                className="flex flex-col items-center rounded-xl border border-step-border bg-step-card p-5 text-center"
+              >
+                <div className="mb-3 text-step-gold">{f.icon}</div>
+                <p className="text-sm font-bold text-white">{f.title}</p>
+                <p className="mt-1 text-xs text-step-muted">{f.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Science block */}
-      <section className="py-20 sm:py-24">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="grid gap-10 md:grid-cols-2">
+      {/* ── CTA ── */}
+      <section className="border-b border-step-border py-14">
+        <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
+          <Link
+            href="/shop"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-lg bg-step-surface py-5 text-base font-bold tracking-widest text-white transition hover:bg-step-card sm:w-auto sm:px-16"
+          >
+            STARTA MIN PLAN
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
+
+          {/* Trust row */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-step-muted">
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-3.5 w-3.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" />
+              </svg>
+              Säker kassa
+            </span>
+            <span className="text-step-border">|</span>
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-3.5 w-3.5">
+                <path d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+              </svg>
+              Diskret leverans
+            </span>
+            <span className="text-step-border">|</span>
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-3.5 w-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              Ingen bindning. Avsluta när som helst.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonial + badges ── */}
+      <section className="py-14">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="grid gap-10 sm:grid-cols-2">
+            {/* Testimonial */}
             <div>
-              <p className="text-xs font-semibold tracking-[0.25em] text-step-gold">VARFÖR DET FUNGERAR</p>
-              <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
-                Hjärnvetenskap, inte viljestyrka
-              </h2>
-              <p className="mt-4 text-step-muted leading-relaxed">
-                Nikotin förändrar hjärnans belöningssystem. En plötslig avhoppning skapar starka
-                abstinensreaktioner som triggar återfall — inte för att du är svag, utan för att
-                hjärnan motarbetar dig.
+              <p className="text-4xl text-step-gold/40 leading-none">"</p>
+              <p className="mt-2 text-lg font-medium leading-relaxed text-white">
+                Det är första gången jag känner att jag har kontroll. Steg för steg — det funkar på riktigt.
               </p>
-              <p className="mt-4 text-step-muted leading-relaxed">
-                Med en gradvis minskning hinner receptorerna återhämta sig i lugn takt. Varje
-                leverans är ett litet steg din hjärna knappt märker av — men som summerar till full
-                frihet.
-              </p>
+              <div className="mt-4 flex items-center gap-2">
+                <div className="flex text-step-gold">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-xs text-step-muted">10 000+ verifierade kunder</span>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 content-start">
+
+            {/* Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:justify-end">
               {[
-                { stat: "~6–8 veckor", label: "för att hjärnans nikotinreceptorer normaliserats vid gradvis nedtrappning" },
-                { stat: "3–4×", label: "högre sannolikhet att lyckas jämfört med kall kalkonen" },
-                { stat: "0 mg", label: "målet — och medlet är tid, inte viljestyrka" },
-                { stat: "Diskret", label: "frakt varje månad, ingen prenumeration som syns på kontoutdraget" },
-              ].map((item) => (
-                <div key={item.stat} className="rounded-lg border border-step-border bg-step-card p-4">
-                  <p className="text-2xl font-black text-step-gold">{item.stat}</p>
-                  <p className="mt-1 text-xs text-step-muted leading-snug">{item.label}</p>
+                { icon: "✦", label: "Designad i Sverige" },
+                { icon: "◎", label: "Premium ingredienser" },
+                { icon: "♡", label: "Skapad för din resa" },
+              ].map((b) => (
+                <div key={b.label} className="flex flex-col items-center gap-2 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-step-border bg-step-surface text-xl text-step-gold">
+                    {b.icon}
+                  </div>
+                  <p className="text-xs text-step-muted">{b.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </section>
+
     </SiteShell>
   );
 }
