@@ -95,32 +95,21 @@ export default async function ShopPage() {
                 <PlanCard plan={p} />
               </div>
             ))}
+          </div>
 
-            {/* Custom plan card */}
+          {/* Custom plan banner */}
+          <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl border border-dashed border-step-border bg-step-card px-8 py-7 sm:flex-row">
+            <div>
+              <p className="text-base font-bold text-white">Passar ingen av planerna dig?</p>
+              <p className="mt-1 text-sm text-step-muted">
+                Bygg din egen plan efter dina behov — välj styrka, längd och antal burkar själv.
+              </p>
+            </div>
             <Link
               href="/shop/anpassa"
-              className="group flex w-full max-w-[320px] flex-1 basis-72 flex-col rounded-2xl border border-dashed border-step-border bg-step-card p-6 transition hover:border-step-gold/50 hover:bg-step-gold/5"
+              className="shrink-0 rounded-lg border border-step-gold px-6 py-3 text-sm font-semibold text-step-gold transition hover:bg-step-gold hover:text-black"
             >
-              <div className="flex flex-1 flex-col items-center justify-center py-6 text-center">
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-step-border bg-step-surface text-2xl group-hover:border-step-gold/40">
-                  ✦
-                </div>
-                <p className="text-sm font-bold uppercase tracking-widest text-step-gold">Custom</p>
-                <p className="mt-1 text-base font-bold text-white">Bygg din egna plan</p>
-                <p className="mt-2 text-xs text-step-muted">
-                  Anpassa styrka, längd och antal burkar efter dina egna förutsättningar.
-                </p>
-                <div className="mt-5 flex flex-wrap justify-center gap-1.5 text-xs text-step-muted">
-                  {["2–20 mg", "3–12 mån", "1–4 burkar"].map((tag) => (
-                    <span key={tag} className="rounded-full border border-step-border px-2.5 py-1">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg border border-step-gold py-3 text-center text-sm font-semibold text-step-gold transition group-hover:bg-step-gold group-hover:text-black">
-                Konfigurera →
-              </div>
+              Konfigurera →
             </Link>
           </div>
         </div>
